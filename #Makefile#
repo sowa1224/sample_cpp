@@ -1,0 +1,83 @@
+################################################################################################################################################
+###        In this Makefile made by taka, you can use as                                                               	                     ###
+###        $ make                     # You can get the executable file which written in TARGET.                                             ###
+###        $ make hoge                # You can get the executable file which written in hoge.                                               ###
+###        $ make clean               # The executable file which written in TARGET will removed.                                            ###
+################################################################################################################################################
+
+TARGET=$(MAKECMDGOALS)
+ifeq ($(MAKECMDGOALS),)
+	TARGET=getinfo
+endif
+ifeq ($(MAKECMDGOALS),clean)
+	TARGET=getinfo
+endif
+
+DIRX = /usr/X11R6/lib
+CXXFLAGS = -fpermissive
+LDFLAGS	 = -L "$(DIRX)"  -L/usr/lib -lm -pthread -std=c++11 
+
+ifeq ($(TARGET),calib)
+	SOURCE_MAIN = karcalib.cpp
+	LDFLAGS += -pthread -lKARoperator 
+endif
+
+ifeq ($(TARGET),joy)
+	SOURCE_MAIN = karjoystick.cpp
+	LDFLAGS += -pthread -lKARoperator 
+endif
+
+ifeq ($(TARGET),getinfo)
+	SOURCE_MAIN = kargetinfo.cpp
+	LDFLAGS += -pthread -lKARoperator 
+endif
+
+ifeq ($(TARGET),setposq)
+	SOURCE_MAIN = karsetposq.cpp
+	LDFLAGS += -pthread -lKARoperator 
+endif
+
+
+
+ifeq ($(TARGET),test)
+	SOURCE_MAIN = kartest.cpp
+	LDFLAGS += -pthread -lKARoperator 
+endif
+
+ifeq ($(TARGET),test2)
+	SOURCE_MAIN = kartest2.cpp
+	LDFLAGS += -pthread -lKARoperator 
+endif
+
+ifeq ($(TARGET),furi)
+	SOURCE_MAIN = karfuri.cpp
+	LDFLAGS += -pthread -lKARoperator 
+endif
+
+ifeq ($(TARGET),cook)
+	SOURCE_MAIN = cook.cpp
+	LDFLAGS += -pthread -lKARoperator 
+endif
+
+PROGRAM = $(SOURCE_MAIN:%.cpp=%.out)
+SUBOBJ = $(SOURCE_SUB:%.cpp=%.o)
+MAINOBJ = $(SOURCE_MAIN:%.cpp=%.o)
+PROGRAM += $(MAINOBJ)
+PROGRAM += $(SUBOBJ)
+
+
+getinfo : $(PROGRAM)
+setposq : $(PROGRAM)
+calib : $(PROGRAM)
+joy : $(PROGRAM)
+test: $(PROGRAM)
+test2: $(PROGRAM)
+furi: $(PROGRAM)
+cook: $(PROGRAM)
+
+%.out: %.o $(SUBOBJ)
+	g++ -o $@ $^ $(LDFLAGS) -w
+%.o : %.cpp
+	g++ -o $@ $< -c $(CXXFLAGS) -w
+clean:
+	rm -f *.o $(PROGRAM)
