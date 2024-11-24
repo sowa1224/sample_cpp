@@ -2,12 +2,13 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 import numpy as np
 
-
 def quaternion_to_euler(q):
     # クォータニオンの要素
-    w, x, y, z = q
-
-    # オイラー角の計算
+    x = q[0]
+    y = q[1]
+    z = q[2]
+    w = q[3]
+        # オイラー角の計算
     roll = np.arctan2(2 * (w * x + y * z), 1 - 2 * (x**2 + y**2))
     pitch = np.arcsin(2 * (w * y - z * x))
     yaw = np.arctan2(2 * (w * z + x * y), 1 - 2 * (y**2 + z**2))
@@ -35,7 +36,17 @@ def euler_to_quaternion(roll, pitch, yaw):
 
     return np.array([w, x, y, z])
 
-q_kar = [0.007442124958986886, -0.12291116434671723, 0.992388663760853, 0.0014834062078802515]
+q_wxyz = [0.0188505, -0.395338, 0.91737, -0.0422521]
+roll, pitch, yaw = quaternion_to_euler(q_wxyz)
+# yaw軸の角度を30度ずつ5回引いたクォータニオンを出力
+for _ in range(5):
+    yaw += np.radians(20)  # 10度をラジアンに変換して引く
+    updated_quaternion = euler_to_quaternion(roll, pitch, yaw)
+    #print("Updated Quaternion:", updated_quaternion)
+    print(f"{updated_quaternion[0],updated_quaternion[1],updated_quaternion[2],updated_quaternion[3]}")
+
+"""
+q_kar = [ 0.0188505, -0.395338, 0.91737, -0.0422521]
 q_wxyz =[q_kar[3],q_kar[0],q_kar[1],q_kar[2]]
 print(f'q_karは{q_kar}')
 print(f'q_wxyz{q_wxyz}')
@@ -44,16 +55,11 @@ O=quaternion_to_euler(q_wxyz)
 print(f'オイラー角は:{O}')
 print(f'roll{np.degrees(O[0])},pitch{np.degrees(O[1])},yaw{np.degrees(O[2])}')
 print(f'オイラー角からの変換:{euler_to_quaternion(O[0],O[1],O[2])}')
+"""
 
 
-# クォータニオンからオイラー角を取得
-roll, pitch, yaw = quaternion_to_euler(q_wxyz)
 
-# yaw軸の角度を30度ずつ5回引いたクォータニオンを出力
-for _ in range(5):
-    roll -= np.radians(30)  # 10度をラジアンに変換して引く
-    updated_quaternion = euler_to_quaternion(roll, pitch, yaw)
-    print(f"{updated_quaternion[1],updated_quaternion[2],updated_quaternion[3],updated_quaternion[0]}")
+
 
 """
 # クォータニオンからオイラー角への変換
